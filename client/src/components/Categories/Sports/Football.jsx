@@ -79,22 +79,38 @@ function Football() {
     }, 2000);
   };
 
+  const shareOnTwitter = () => {
+    const shareUrl = `https://twitter.com/intent/tweet?text=Mon%20score%20sur%20Quoiz%20est%20de%20${score}%20!%20🎉`;
+    window.open(shareUrl, '_blank');
+  };
+
+  const shareOnFacebook = () => {
+    const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=https://example.com&quote=Mon%20score%20sur%20Quoiz%20est%20de%20${score}%20!%20🎉`;
+    window.open(shareUrl, '_blank');
+  };
+
   if (quizComplete) {
     return (
       <div className="quiz">
-      <div className="quiz-content">
-        <div className="question-section tertiary-bg">
-          <div className="question-text">
-            <h2 className="question">Quiz complet</h2>
+        <div className="quiz-content">
+          <div className="question-section tertiary-bg">
+            <div className="question-text">
+              <h2 className="question">Quiz complet</h2>
+            </div>
+          </div>
+          <div className="answer-section" style={{ opacity: quizComplete ? 1 : 0, transition: 'opacity 1s ease' }}>
+            <button style={{ textAlign: 'center', cursor: 'default' }}><strong>Votre score global est : {score}</strong></button>
+            <button style={{ textAlign: 'center', cursor: 'default' }}><strong>Nombre de bonnes réponses : {correctAnswers} / 5</strong></button>
+            <button style={{ textAlign: 'center', cursor: 'default' }}><strong>Précision : {((correctAnswers / 5) * 100).toFixed(2)}%</strong></button>
+            <button onClick={shareOnTwitter} className="question">Partager sur Twitter</button>
+            <button onClick={shareOnFacebook} className="button.share">Partager sur Facebook</button>
+          </div>
+          <div className="share-buttons flex justify-center mt-4">
+  
+            
           </div>
         </div>
-        <div className="answer-section" style={{ opacity: quizComplete ? 1 : 0, transition: 'opacity 1s ease' }}>
-          <button style={{ textAlign: 'center', cursor: 'default' }}><strong>Votre score global est : {score}</strong></button>
-          <button style={{ textAlign: 'center', cursor: 'default' }}><strong>Nombre de bonnes réponses : {correctAnswers} / 5</strong></button>
-          <button style={{ textAlign: 'center', cursor: 'default' }}><strong>Précision : {((correctAnswers / 5) * 100).toFixed(2)}%</strong></button>
-        </div>
       </div>
-    </div>
     );
   }
 

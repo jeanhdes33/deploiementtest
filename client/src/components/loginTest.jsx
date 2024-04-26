@@ -85,57 +85,80 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
     }
   }, [jwt]);
 
-  return (
-    <div className="bg-white py-6 sm:py-8 lg:py-12 font-varela">
-      <div className="mx-auto max-w-screen-2xl px-4 md:px-8">
-        <h2 className="mb-4 text-center text-2xl font-bold text-gray-800 md:mb-8 lg:text-3xl">{isLoggedIn ? 'Mon compte' : 'Login'}</h2>
+  // Fonction pour partager sur Twitter
+  const shareOnTwitter = () => {
+    const shareUrl = `https://twitter.com/intent/tweet?text=Mon%20score%20sur%20Quoiz%20est%20de%20${score}%20!%20🎉`;
+    window.open(shareUrl, '_blank');
+  };
 
-        {isLoggedIn ? (
-          <div className="text-center">
-            <p className="mb-4 text-xl">Bienvenue, {username}!</p>
-            <p className="mb-2">Votre score actuel : {score}</p>
-            <p className="text-sm text-gray-500">Vous êtes connecté avec succès.</p>
+  // Fonction pour partager sur Facebook
+  const shareOnFacebook = () => {
+    const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=https://example.com&quote=Mon%20score%20sur%20Quoiz%20est%20de%20${score}%20!%20🎉`;
+    window.open(shareUrl, '_blank');
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col justify-start items-center py-12">
+      <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
+        {isLoggedIn && (
+          <div className="text-center mb-8">
+            <p className="text-3xl font-bold text-gray-800 mb-4">Bienvenue, {username}!</p>
+            <p className="text-xl mb-6">Votre score actuel : {score}</p>
+            <p className="text-lg text-gray-500 mb-4">Vous êtes connecté avec succès.</p>
           </div>
-        ) : (
-          <form className="mx-auto max-w-lg rounded-lg border" onSubmit={loginUser}>
-            <div className="flex flex-col gap-4 p-4 md:p-8 bg-accent">
+        )}
+
+        {!isLoggedIn && (
+          <form onSubmit={loginUser} className="flex flex-col">
+            <div className="space-y-4">
               <div>
-                <label htmlFor="email" className="mb-2 inline-block text-sm text-gray-800 sm:text-base">Email</label>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
                 <input
                   type="email"
                   name="email"
                   value={data.email}
                   onChange={(e) => setData({ ...data, email: e.target.value })}
-                  className="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring"
+                  className="mt-1 block w-full shadow-sm border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
               </div>
 
               <div>
-                <label htmlFor="password" className="mb-2 inline-block text-sm text-gray-800 sm:text-base">Password</label>
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
                 <input
                   type="password"
                   name="password"
                   value={data.password}
                   onChange={(e) => setData({ ...data, password: e.target.value })}
-                  className="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring"
+                  className="mt-1 block w-full shadow-sm border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                 />
               </div>
 
-              <button type="submit" className="block rounded-lg bg-secondary px-8 py-3 text-center text-sm font-semibold text-white outline-none ring-gray-300 transition duration-100 hover:bg-primary focus-visible:ring active:bg-gray-600 md:text-base">Log in</button>
-            </div>
-
-            <div className="flex items-center justify-center bg-gray-100 p-4">
-              <p className="text-center text-sm text-gray-500">Vous n'avez pas de compte ? <Link to="/register" className="text-indigo-500 transition duration-100 hover:text-indigo-600 active:text-indigo-700">Register</Link></p>
+              <button type="submit" className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                Log in
+              </button>
             </div>
           </form>
         )}
 
         {errorMessage && (
-          <div className="flex items-center justify-center bg-gray-100 p-4 mt-4">
-            <p className="text-center text-sm text-red-500">{errorMessage}</p>
+          <div className="mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+            <span className="block sm:inline">{errorMessage}</span>
           </div>
         )}
 
+        {!isLoggedIn && (
+          <div className="mt-4 text-sm text-gray-600">
+            Vous n'avez pas de compte ? <Link to="/register" className="font-medium text-indigo-600 hover:text-indigo-500">Register</Link>
+          </div>
+        )}
+
+        {/* Boutons de partage */}
+        {isLoggedIn && (
+          <div className="flex flex-row justify-center">
+            <button onClick={shareOnTwitter} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-4">Partager sur Twitter</button>
+            <button onClick={shareOnFacebook} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Partager sur Facebook</button>
+          </div>
+        )}
       </div>
     </div>
   );

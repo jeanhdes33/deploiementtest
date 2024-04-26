@@ -153,6 +153,11 @@ body, html {
   color: #fff;
 }
 
+.quiz-content .answer-section button.share {
+  background-color: #25049b;
+  color: #fff;
+}
+
 .quiz-content .answer-section button.incorrect {
   background-color: #d9534f;
   color: #fff;
