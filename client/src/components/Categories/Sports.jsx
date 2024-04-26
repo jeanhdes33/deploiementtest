@@ -1,18 +1,39 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
 const Sport = () => {
   const sportCategories = [
     { name: 'Football', icon: '⚽', description: 'Description du football.', slug: 'football' },
-    { name: 'Basketball', icon: '🏀', description: 'Description du basketball.', slug: 'basketball', disabled: true }, // Ajouter la propriété disabled
-    { name: 'Tennis', icon: '🎾', description: 'Description du tennis.', slug: 'tennis', disabled: true }, // Ajouter la propriété disabled
+    { name: 'Basketball', icon: '🏀', description: 'Description du basketball.', slug: 'basketball', disabled: true },
+    { name: 'Tennis', icon: '🎾', description: 'Description du tennis.', slug: 'tennis', disabled: true },
   ];
+
+  const [fadeIn, setFadeIn] = useState(false);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setFadeIn(true);
+    }, 500); // Délai de 0.5 seconde pour l'effet de fondu
+
+    return () => clearTimeout(timeoutId);
+  }, []);
+
+  const scaleVariants = {
+    hidden: { scale: 0 },
+    visible: { scale: 1, transition: { duration: 0.5 } },
+  };
 
   return (
     <div style={{ textAlign: 'center', marginTop: '50px' }}>
       <h1 style={{ fontSize: '24px', marginBottom: '20px' }}>Choisissez votre catégorie</h1>
-      <div className="grid-container" style={{ backgroundColor: 'white', padding: '20px', display: 'inline-flex', flexDirection: 'column', alignItems: 'center' }}>
+      <motion.div
+        className="grid-container"
+        style={{ backgroundColor: 'white', padding: '20px', display: 'inline-flex', flexDirection: 'column', alignItems: 'center' }}
+        variants={scaleVariants}
+        initial="hidden"
+        animate={fadeIn ? "visible" : "hidden"}
+      >
         {sportCategories.map((category, index) => (
           <motion.div
             key={index}
@@ -42,7 +63,7 @@ const Sport = () => {
             )}
           </motion.div>
         ))}
-      </div>
+      </motion.div>
     </div>
   );
 };

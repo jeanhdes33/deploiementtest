@@ -14,6 +14,11 @@ const categories = [
 const Quiz = () => {
   const [hovered, setHovered] = useState(null);
 
+  const fadeVariants = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { duration: 0.5 } },
+  };
+
   const scaleVariants = {
     hover: {
       scale: 1.01,
@@ -27,7 +32,13 @@ const Quiz = () => {
   };
 
   return (
-    <div className="grid-container" style={{ backgroundColor: 'white', marginTop: '20px', padding: '20px' }}>
+    <motion.div
+      className="grid-container"
+      style={{ backgroundColor: 'white', marginTop: '20px', padding: '20px' }}
+      variants={fadeVariants}
+      initial="hidden"
+      animate="visible"
+    >
       {categories.map((category, index) => (
         <motion.div
           key={index}
@@ -55,7 +66,7 @@ const Quiz = () => {
           </Link>
         </motion.div>
       ))}
-    </div>
+    </motion.div>
   );
 };
 

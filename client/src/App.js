@@ -6,7 +6,6 @@ import Home from './components/Home';
 import Quiz from './components/Quiz';
 import Sports from './components/Categories/Sports';
 import Football from './components/Categories/Sports/Football';
-import Dashboard from './components/Dashboard';
 import QuestionForm from './components/QuestionForm';
 import './App.css';
 import logo from './logo.png';
@@ -85,7 +84,7 @@ function App() {
             )}
             <Route path="/categories/sports" element={<Sports />} />
             <Route path="/categories/football" element={<Football />} />
-            <Route path="/dashboard" element={<Dashboard />} />
+  
             {!isLoggedIn && (
               <Route path="/quiz" element={<Navigate to="/login" />} />
             )}
