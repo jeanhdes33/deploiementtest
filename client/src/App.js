@@ -7,20 +7,18 @@ import Quiz from './components/Quiz';
 import Sports from './components/Categories/Sports';
 import Football from './components/Categories/Sports/Football';
 import Dashboard from './components/Dashboard';
-import QuestionForm from './components/QuestionForm'; // Importation du composant QuestionForm
+import QuestionForm from './components/QuestionForm';
 import './App.css';
 import logo from './logo.png';
 
 function App() {
-  // Initialiser l'état isLoggedIn en fonction de la présence des données utilisateur dans le localStorage
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     return localStorage.getItem('user') ? true : false;
   });
 
-  // Fonction pour gérer la déconnexion de l'utilisateur
   const handleLogout = () => {
-    localStorage.removeItem('user'); // Supprimer les données utilisateur du localStorage
-    setIsLoggedIn(false); // Mettre à jour l'état pour indiquer que l'utilisateur est déconnecté
+    localStorage.removeItem('user');
+    setIsLoggedIn(false);
   };
 
   return (
@@ -91,14 +89,12 @@ function App() {
             {!isLoggedIn && (
               <Route path="/quiz" element={<Navigate to="/login" />} />
             )}
-            <Route path="/quoizer" element={<QuestionForm />} /> {/* Utilisation du composant QuestionForm pour la route /quoizer */}
+            <Route path="/quoizer" element={<QuestionForm />} />
           </Routes>
         </main>
       </div>
     </Router>
   );
 }
-
-
 
 export default App;

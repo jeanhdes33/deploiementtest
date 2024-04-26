@@ -10,20 +10,19 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
   const [errorMessage, setErrorMessage] = useState('');
   const [username, setUsername] = useState('');
   const [jwt, setJwt] = useState('');
-  const [score, setScore] = useState(0); // Nouveau state pour stocker le score
+  const [score, setScore] = useState(() => {
+    const userScore = localStorage.getItem('score');
+    return userScore ? parseInt(userScore) : 0;
+  });
 
   useEffect(() => {
     const loggedInUser = localStorage.getItem('user');
     const token = localStorage.getItem('token');
-    const userScore = localStorage.getItem('score'); // Récupérer le score du local storage
     if (loggedInUser && token) {
       const userData = JSON.parse(loggedInUser);
       setUsername(userData.name);
       setJwt(token);
       setIsLoggedIn(true);
-      if (userScore) {
-        setScore(parseInt(userScore)); // Mettre à jour le score avec celui du local storage
-      }
     }
   }, [setIsLoggedIn]);
 
@@ -73,12 +72,12 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
   return (
     <div className="bg-white py-6 sm:py-8 lg:py-12 font-varela">
       <div className="mx-auto max-w-screen-2xl px-4 md:px-8">
-        <h2 className="mb-4 text-center text-2xl font-bold text-gray-800 md:mb-8 lg:text-3xl">{isLoggedIn ? 'Mon compte' : 'Login'}</h2> {/* Changer le titre en fonction de l'état isLoggedIn */}
+        <h2 className="mb-4 text-center text-2xl font-bold text-gray-800 md:mb-8 lg:text-3xl">{isLoggedIn ? 'Mon compte' : 'Login'}</h2>
 
         {isLoggedIn ? (
           <div className="text-center">
             <p className="mb-4 text-xl">Bienvenue, {username}!</p>
-            <p className="mb-2">Votre score actuel : {score}</p> {/* Afficher le score */}
+            <p className="mb-2">Votre score actuel : {score}</p>
             <p className="text-sm text-gray-500">Vous êtes connecté avec succès.</p>
           </div>
         ) : (
