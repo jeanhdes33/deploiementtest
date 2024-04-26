@@ -16,8 +16,8 @@ function App() {
   });
 
   const handleLogout = () => {
-    localStorage.removeItem('user');
-    setIsLoggedIn(false);
+    localStorage.clear(); // Vide complètement le localStorage
+    setIsLoggedIn(false); // Mettre à jour l'état isLoggedIn
   };
 
   return (

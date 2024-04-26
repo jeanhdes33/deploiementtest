@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { jwtDecode } from 'jwt-decode';
 
 function Football() {
-  const initialScore = parseInt(localStorage.getItem('score')) || 0; // Récupérer le score initial depuis le local storage
+  const initialScore = parseInt(localStorage.getItem('score')) || 0;
   const [question, setQuestion] = useState(null);
   const [quizComplete, setQuizComplete] = useState(false);
-  const [score, setScore] = useState(initialScore); // Utiliser le score initial récupéré du local storage
+  const [score, setScore] = useState(initialScore);
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [timeLeft, setTimeLeft] = useState(10);
   const [questionCount, setQuestionCount] = useState(0);
   const [answered, setAnswered] = useState(false);
-  const [disableButtons, setDisableButtons] = useState(false); // Ajouter un état pour désactiver les boutons de réponse
+  const [disableButtons, setDisableButtons] = useState(false);
 
   useEffect(() => {
     fetchFootballQuestion();
@@ -23,7 +24,7 @@ function Football() {
         setTimeLeft(timeLeft - 1);
       }, 1000);
     } else if (timeLeft === 0 && !answered) {
-      handleAnswerButtonClick(-1); // Si le temps est écoulé et que l'utilisateur n'a pas répondu, réduire le score de 1 point
+      handleAnswerButtonClick(-1);
     }
     return () => clearTimeout(timer);
   }, [timeLeft, quizComplete, answered]);
@@ -33,65 +34,79 @@ function Football() {
       const response = await axios.get('http://localhost:8000/questions/football/random');
       setQuestion(response.data);
       setTimeLeft(10);
-      setAnswered(false); // Réinitialiser l'état de réponse à chaque nouvelle question
-      setDisableButtons(false); // Activer les boutons de réponse à chaque nouvelle question
+      setAnswered(false);
+      setDisableButtons(false);
     } catch (error) {
       console.error('Erreur lors de la récupération de la question de football :', error);
     }
   };
 
-  const handleAnswerButtonClick = (selectedOptionIndex) => {
+  const handleAnswerButtonClick = async (selectedOptionIndex) => {
     const isCorrect = selectedOptionIndex === question.correctOptionIndex;
     let updatedScore = score;
     if (isCorrect) {
-      updatedScore += 5 + timeLeft; // Ajouter 5 points et le temps restant en points pour une réponse correcte
+      updatedScore += 5 + timeLeft;
       setCorrectAnswers(correctAnswers + 1);
-    } else if (selectedOptionIndex !== -1) { // Ne réduire le score que si l'utilisateur a répondu
-      updatedScore -= 5; // Soustraire 5 points pour une mauvaise réponse
+    } else if (selectedOptionIndex !== -1) {
+      updatedScore -= 5;
     } else {
-      updatedScore -= 10; // Soustraire 10 points si le temps est écoulé
+      updatedScore -= 10;
     }
     setScore(updatedScore);
-    setAnswered(true); // Marquer la question comme répondue
-    setDisableButtons(true); // Désactiver les boutons de réponse pendant le délai de passage à la prochaine question
-    localStorage.setItem('score', updatedScore); // Stocker le score mis à jour dans le local storage
+    setAnswered(true);
+    setDisableButtons(true);
+    localStorage.setItem('score', updatedScore);
+    
+    try {
+      const token = localStorage.getItem('token');
+      const decodedToken = jwtDecode(token);
+      const userId = decodedToken.id;
+      const response = await axios.post('http://localhost:8000/update-score', { userId: userId, newScore: updatedScore });
+      console.log('Score mis à jour côté serveur:', response.data);
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour du score côté serveur:', error);
+    }
 
     setTimeout(() => {
-      if (questionCount < 4) { // Arrêter le quiz après 5 questions
-        fetchFootballQuestion(); // Charger une nouvelle question après avoir répondu
+      if (questionCount < 4) {
+        fetchFootballQuestion();
         setQuestionCount(questionCount + 1);
-        setDisableButtons(false); // Activer à nouveau les boutons de réponse
+        setDisableButtons(false);
       } else {
         console.log('Score final :', score);
-        setQuizComplete(true); // Marquer le quiz comme terminé après la dernière question
+        setQuizComplete(true);
       }
-    }, 2000); // Délai avant de passer à la prochaine question
+    }, 2000);
   };
 
   if (quizComplete) {
-    const totalQuestions = 5; // Nombre total de questions
-    const accuracy = (correctAnswers / totalQuestions) * 100; // Calcul de la précision
     return (
       <div className="quiz">
-        <h1>Quiz complet</h1>
-        <h2>Votre score final est : {score}</h2>
-        <h2>Nombre de bonnes réponses : {correctAnswers} / {totalQuestions}</h2>
-        <h2>Précision : {accuracy.toFixed(2)}%</h2>
+      <div className="quiz-content">
+        <div className="question-section tertiary-bg">
+          <div className="question-text">
+            <h2 className="question">Quiz complet</h2>
+          </div>
+        </div>
+        <div className="answer-section" style={{ opacity: quizComplete ? 1 : 0, transition: 'opacity 1s ease' }}>
+          <button style={{ textAlign: 'center', cursor: 'default' }}><strong>Votre score global est : {score}</strong></button>
+          <button style={{ textAlign: 'center', cursor: 'default' }}><strong>Nombre de bonnes réponses : {correctAnswers} / 5</strong></button>
+          <button style={{ textAlign: 'center', cursor: 'default' }}><strong>Précision : {((correctAnswers / 5) * 100).toFixed(2)}%</strong></button>
+        </div>
       </div>
+    </div>
     );
   }
 
   if (!question) {
-    return <div>Loading...</div>;
+    return <div className="loading">Loading...</div>;
   }
 
   return (
     <div className="quiz">
       <div className="quiz-content">
         <div className="question-section tertiary-bg">
-          <div className="question-count white">
-            Question
-          </div>
+          <div className="question-count white">Question</div>
           <div className="question-text">
             <h2 className="question">{question.question}</h2>
           </div>
@@ -102,15 +117,13 @@ function Football() {
               key={index}
               onClick={() => handleAnswerButtonClick(index)}
               className={answered && index === question.correctOptionIndex ? 'correct' : answered && index !== question.correctOptionIndex ? 'incorrect' : ''}
-              disabled={answered || disableButtons} // Désactiver les boutons après avoir répondu ou pendant le délai de passage à la prochaine question
+              disabled={answered || disableButtons}
             >
               {option}
             </button>
           ))}
         </div>
-        <div className="time-left">
-          Temps restant : {timeLeft} secondes
-        </div>
+        <div className="time-left">Temps restant : {timeLeft} secondes</div>
       </div>
     </div>
   );

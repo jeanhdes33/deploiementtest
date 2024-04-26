@@ -43,10 +43,26 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
         setJwt(response.data.token);
         setIsLoggedIn(true);
         setData({ email: '', password: '' });
+        fetchScore(response.data.token); // Call fetchScore after successful login
       }
     } catch (error) {
       console.error('Erreur lors de la connexion:', error);
       setErrorMessage('Erreur lors de la connexion');
+    }
+  };
+
+  const fetchScore = async (token) => {
+    try {
+      const response = await axios.get('http://localhost:8000/user', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const userScore = response.data.score;
+      setScore(userScore);
+      localStorage.setItem('score', userScore.toString());
+    } catch (error) {
+      console.error('Erreur lors de la récupération du score:', error);
     }
   };
 
