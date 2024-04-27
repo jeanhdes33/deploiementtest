@@ -12,6 +12,7 @@ function Football() {
   const [questionCount, setQuestionCount] = useState(0);
   const [answered, setAnswered] = useState(false);
   const [disableButtons, setDisableButtons] = useState(false);
+  const [answeredQuestions, setAnsweredQuestions] = useState([]);
 
   useEffect(() => {
     fetchFootballQuestion();
@@ -32,10 +33,20 @@ function Football() {
   const fetchFootballQuestion = async () => {
     try {
       const response = await axios.get('http://localhost:8000/questions/football/random');
-      setQuestion(response.data);
-      setTimeLeft(10);
-      setAnswered(false);
-      setDisableButtons(false);
+      const newQuestion = response.data;
+
+      // Vérifie si la nouvelle question est déjà dans la liste des questions posées
+      if (answeredQuestions.some(q => q._id === newQuestion._id)) {
+        // Si la question est déjà posée, récupère une nouvelle question
+        fetchFootballQuestion();
+      } else {
+        // Si la question est nouvelle, l'ajoute à la liste des questions posées
+        setQuestion(newQuestion);
+        setTimeLeft(10);
+        setAnswered(false);
+        setDisableButtons(false);
+        setAnsweredQuestions([...answeredQuestions, newQuestion]);
+      }
     } catch (error) {
       console.error('Erreur lors de la récupération de la question de football :', error);
     }

@@ -8,6 +8,7 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
         password: ''
     });
     const [errorMessage, setErrorMessage] = useState('');
+    const [errorVisible, setErrorVisible] = useState(false); // Nouvel état pour gérer la visibilité des messages d'erreur
     const [username, setUsername] = useState('');
     const [jwt, setJwt] = useState('');
     const [score, setScore] = useState(() => {
@@ -15,7 +16,7 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
         return userScore ? parseInt(userScore) : 0;
     });
     const [userRanking, setUserRanking] = useState(null);
-    const [totalUsers, setTotalUsers] = useState(null); // Nouvel état pour stocker le nombre total d'utilisateurs
+    const [totalUsers, setTotalUsers] = useState(null);
 
     useEffect(() => {
         const loggedInUser = localStorage.getItem('user');
@@ -38,6 +39,11 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
             });
             if (response.data.error) {
                 setErrorMessage(response.data.error);
+                setErrorVisible(true); // Affiche le message d'erreur
+                setTimeout(() => {
+                    setErrorMessage('');
+                    setErrorVisible(false); // Cache le message d'erreur après 1 seconde
+                }, 1000);
             } else {
                 const userData = response.data;
                 localStorage.setItem('user', JSON.stringify(userData));
@@ -52,6 +58,11 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
         } catch (error) {
             console.error('Erreur lors de la connexion:', error);
             setErrorMessage('Erreur lors de la connexion');
+            setErrorVisible(true); // Affiche le message d'erreur
+            setTimeout(() => {
+                setErrorMessage('');
+                setErrorVisible(false); // Cache le message d'erreur après 1 seconde
+            }, 1000);
         }
     };
 
@@ -78,7 +89,7 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
                 }
             });
             setUserRanking(response.data.ranking);
-            setTotalUsers(response.data.totalUsers); // Met à jour le nombre total d'utilisateurs
+            setTotalUsers(response.data.totalUsers);
         } catch (error) {
             console.error('Erreur lors de la récupération du classement de l\'utilisateur:', error);
         }
@@ -124,7 +135,7 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
                     <div className="text-center mb-8">
                         <p className="text-3xl font-bold text-gray-800 mb-4">Bienvenue, {username}!</p>
                         <p className="text-xl mb-6">Votre score actuel : {score}</p>
-                        <p className="text-xl mb-4">Votre classement : {userRanking} / {totalUsers} utilisateurs</p> 
+                        <p className="text-xl mb-4">Votre classement : {userRanking} / {totalUsers} utilisateurs</p>
                         <p className="text-lg text-gray-500 mb-4">Vous êtes connecté avec succès.</p>
                     </div>
 
@@ -169,9 +180,9 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
                 </form>
             )}
 
-            {errorMessage && (
-                <div className="mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                    <span className="block sm:inline">{errorMessage}</span>
+            {errorVisible && errorMessage && ( // Affiche le message d'erreur si errorVisible est vrai
+             <div className="flex items-center justify-center bg-gray-100 p-4 mt-4">
+             <p className="text-center text-sm text-red-500">{errorMessage}</p>
                 </div>
             )}
         </div>
