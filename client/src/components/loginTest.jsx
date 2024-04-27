@@ -115,12 +115,12 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
     }, [jwt]);
 
     const shareOnTwitter = () => {
-        const shareUrl = `https://twitter.com/intent/tweet?text=Mon%20score%20sur%20Quoiz%20est%20de%20${score}%20!%20🎉`;
+        const shareUrl = `https://twitter.com/intent/tweet?text=Mon%20score%20total%20est%20de%20${score}%20et%20mon%20classement%20est%20${userRanking}%2F${totalUsers}%20sur%20Quoiz%20!%20Viens%20me%20battre%20!`;
         window.open(shareUrl, '_blank');
     };
 
     const shareOnFacebook = () => {
-        const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=https://example.com&quote=Mon%20score%20sur%20Quoiz%20est%20de%20${score}%20!%20🎉`;
+        const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=https://example.com&quote=Mon%20score%20total%20est%20de%20${score}%20et%20mon%20classement%20est%20${userRanking}%2F${totalUsers}%20sur%20Quoiz%20!%20Viens%20me%20battre%20!`;
         window.open(shareUrl, '_blank');
     };
 
@@ -181,8 +181,8 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
             )}
 
             {errorVisible && errorMessage && ( // Affiche le message d'erreur si errorVisible est vrai
-             <div className="flex items-center justify-center bg-gray-100 p-4 mt-4">
-             <p className="text-center text-sm text-red-500">{errorMessage}</p>
+                <div className="flex items-center justify-center bg-gray-100 p-4 mt-4">
+                    <p className="text-center text-sm text-red-500">{errorMessage}</p>
                 </div>
             )}
         </div>
