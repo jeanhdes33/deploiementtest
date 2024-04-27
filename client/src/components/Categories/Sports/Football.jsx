@@ -80,14 +80,14 @@ function Football() {
   };
 
   const shareOnTwitter = () => {
-    const shareUrl = `https://twitter.com/intent/tweet?text=Mon%20score%20sur%20Quoiz%20est%20de%20${score}%20!%20🎉`;
+    const shareUrl = `https://twitter.com/intent/tweet?text=Mon%20nombre%20de%20bonnes%20réponses%20à%20Quoiz%20est%20de%20${correctAnswers}%20!%20Viens%20jouer%20!`;
     window.open(shareUrl, '_blank');
-  };
+};
 
-  const shareOnFacebook = () => {
-    const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=https://example.com&quote=Mon%20score%20sur%20Quoiz%20est%20de%20${score}%20!%20🎉`;
+const shareOnFacebook = () => {
+    const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=https://example.com&quote=Mon%20nombre%20de%20bonnes%20réponses%20à%20Quoiz%20est%20de%20${correctAnswers}%20!%20Viens%20jouer%20!`;
     window.open(shareUrl, '_blank');
-  };
+};
 
   if (quizComplete) {
     return (
@@ -102,8 +102,9 @@ function Football() {
             <button style={{ textAlign: 'center', cursor: 'default' }}><strong>Votre score global est : {score}</strong></button>
             <button style={{ textAlign: 'center', cursor: 'default' }}><strong>Nombre de bonnes réponses : {correctAnswers} / 5</strong></button>
             <button style={{ textAlign: 'center', cursor: 'default' }}><strong>Précision : {((correctAnswers / 5) * 100).toFixed(2)}%</strong></button>
-            <button onClick={shareOnTwitter} className="question">Partager sur Twitter</button>
-            <button onClick={shareOnFacebook} className="button.share">Partager sur Facebook</button>
+            <button onClick={shareOnTwitter} className="question" style={{backgroundColor: 'transparent', border: '2px solid blue', color: 'blue'}}>Partager sur Twitter</button>
+<button onClick={shareOnFacebook} className="button share" style={{backgroundColor: 'transparent', border: '2px solid blue', color: 'blue'}}>Partager sur Facebook</button>
+
           </div>
           <div className="share-buttons flex justify-center mt-4">
   

@@ -6,7 +6,6 @@ const test = (req, res) => {
     res.json('test is working');
 };
 
-// Endpoint de registration
 const registerUser = async (req, res) => {
     try {
         const { name, email, password } = req.body;
@@ -42,10 +41,10 @@ const registerUser = async (req, res) => {
         return res.json(user);
     } catch (error) {
         console.log(error);
+        res.status(500).json({ error: 'Erreur lors de l\'enregistrement de l\'utilisateur' });
     }
 };
 
-// Endpoint de connexion
 const loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -74,6 +73,7 @@ const loginUser = async (req, res) => {
         }
     } catch (error) {
         console.log(error);
+        res.status(500).json({ error: 'Erreur lors de la connexion de l\'utilisateur' });
     }
 };
 
@@ -90,7 +90,6 @@ const getProfile = (req, res) => {
     }
 };
 
-// Fonction pour récupérer les informations de l'utilisateur à partir du token JWT
 const getUser = async (req, res) => {
     const token = req.headers.authorization.split(' ')[1]; // Récupérer le token JWT depuis l'en-tête Authorization
     if (!token) {
@@ -110,10 +109,57 @@ const getUser = async (req, res) => {
     }
 };
 
+const updateUserScore = async (req, res) => {
+    const { userId, newScore } = req.body;
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ error: 'Utilisateur non trouvé' });
+        }
+
+        // Mettre à jour le score de l'utilisateur
+        user.score = newScore;
+        await user.save();
+
+        res.status(200).json({ message: 'Score mis à jour avec succès' });
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour du score de l\'utilisateur :', error);
+        res.status(500).json({ error: 'Erreur lors de la mise à jour du score de l\'utilisateur' });
+    }
+};
+
+const getUserRanking = async (req, res) => {
+    try {
+        const token = req.headers.authorization.split(' ')[1]; // Récupérer le token JWT depuis l'en-tête Authorization
+        if (!token) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET); // Vérifier et décoder le token JWT
+        const userId = decodedToken.id;
+        
+        const users = await User.find().sort({ score: -1 });
+        const user = await User.findById(userId);
+        
+        if (!user) {
+            return res.status(404).json({ error: 'Utilisateur non trouvé' });
+        }
+        
+        const userRank = users.findIndex(u => u._id.toString() === user._id.toString()) + 1;
+        res.json({ ranking: userRank, totalUsers: users.length });
+    } catch (error) {
+        console.error('Erreur lors de la récupération du classement de l\'utilisateur :', error);
+        res.status(500).json({ error: 'Erreur lors de la récupération du classement de l\'utilisateur' });
+    }
+};
+
 module.exports = {
     test,
     registerUser,
     loginUser,
     getProfile,
-    getUser // Ajout de la fonction getUser
+    getUser,
+    updateUserScore,
+    getUserRanking
 };
