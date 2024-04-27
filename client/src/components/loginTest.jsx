@@ -15,6 +15,7 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
         return userScore ? parseInt(userScore) : 0;
     });
     const [userRanking, setUserRanking] = useState(null);
+    const [totalUsers, setTotalUsers] = useState(null); // Nouvel état pour stocker le nombre total d'utilisateurs
 
     useEffect(() => {
         const loggedInUser = localStorage.getItem('user');
@@ -77,6 +78,7 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
                 }
             });
             setUserRanking(response.data.ranking);
+            setTotalUsers(response.data.totalUsers); // Met à jour le nombre total d'utilisateurs
         } catch (error) {
             console.error('Erreur lors de la récupération du classement de l\'utilisateur:', error);
         }
@@ -122,7 +124,7 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
                     <div className="text-center mb-8">
                         <p className="text-3xl font-bold text-gray-800 mb-4">Bienvenue, {username}!</p>
                         <p className="text-xl mb-6">Votre score actuel : {score}</p>
-                        <p className="text-xl mb-4">Votre classement : {userRanking}</p> 
+                        <p className="text-xl mb-4">Votre classement : {userRanking} / {totalUsers} utilisateurs</p> 
                         <p className="text-lg text-gray-500 mb-4">Vous êtes connecté avec succès.</p>
                     </div>
 
