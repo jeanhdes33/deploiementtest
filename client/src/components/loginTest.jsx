@@ -8,7 +8,7 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
         password: ''
     });
     const [errorMessage, setErrorMessage] = useState('');
-    const [errorVisible, setErrorVisible] = useState(false); // Nouvel état pour gérer la visibilité des messages d'erreur
+    const [errorVisible, setErrorVisible] = useState(false);
     const [username, setUsername] = useState('');
     const [jwt, setJwt] = useState('');
     const [score, setScore] = useState(() => {
@@ -17,6 +17,7 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
     });
     const [userRanking, setUserRanking] = useState(null);
     const [totalUsers, setTotalUsers] = useState(null);
+    const [bestScore, setBestScore] = useState(null);
 
     useEffect(() => {
         const loggedInUser = localStorage.getItem('user');
@@ -27,6 +28,7 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
             setJwt(token);
             setIsLoggedIn(true);
             fetchUserRanking(token);
+            fetchBestScore();
         }
     }, [setIsLoggedIn]);
 
@@ -39,10 +41,10 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
             });
             if (response.data.error) {
                 setErrorMessage(response.data.error);
-                setErrorVisible(true); // Affiche le message d'erreur
+                setErrorVisible(true);
                 setTimeout(() => {
                     setErrorMessage('');
-                    setErrorVisible(false); // Cache le message d'erreur après 1 seconde
+                    setErrorVisible(false);
                 }, 1000);
             } else {
                 const userData = response.data;
@@ -58,10 +60,10 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
         } catch (error) {
             console.error('Erreur lors de la connexion:', error);
             setErrorMessage('Erreur lors de la connexion');
-            setErrorVisible(true); // Affiche le message d'erreur
+            setErrorVisible(true);
             setTimeout(() => {
                 setErrorMessage('');
-                setErrorVisible(false); // Cache le message d'erreur après 1 seconde
+                setErrorVisible(false);
             }, 1000);
         }
     };
@@ -95,24 +97,14 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
         }
     };
 
-    const fetchUserData = async () => {
+    const fetchBestScore = async () => {
         try {
-            const response = await axios.get('http://localhost:8000/user', {
-                headers: {
-                    Authorization: `Bearer ${jwt}`
-                }
-            });
-            setUsername(response.data.name);
+            const response = await axios.get('http://localhost:8000/best-score');
+            setBestScore(response.data.bestScore);
         } catch (error) {
-            console.error('Erreur lors de la récupération des données utilisateur:', error);
+            console.error('Erreur lors de la récupération du meilleur score:', error);
         }
     };
-
-    useEffect(() => {
-        if (jwt) {
-            fetchUserData();
-        }
-    }, [jwt]);
 
     const shareOnTwitter = () => {
         const shareUrl = `https://twitter.com/intent/tweet?text=Mon%20score%20total%20est%20de%20${score}%20et%20mon%20classement%20est%20${userRanking}%2F${totalUsers}%20sur%20Quoiz%20!%20Viens%20me%20battre%20!`;
@@ -136,6 +128,7 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
                         <p className="text-3xl font-bold text-gray-800 mb-4">Bienvenue, {username}!</p>
                         <p className="text-xl mb-6">Votre score actuel : {score}</p>
                         <p className="text-xl mb-4">Votre classement : {userRanking} / {totalUsers} utilisateurs</p>
+                        <p className="text-xl mb-4">Meilleur score à battre : {bestScore}</p>
                         <p className="text-lg text-gray-500 mb-4">Vous êtes connecté avec succès.</p>
                     </div>
 
@@ -180,7 +173,7 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
                 </form>
             )}
 
-            {errorVisible && errorMessage && ( // Affiche le message d'erreur si errorVisible est vrai
+            {errorVisible && errorMessage && (
                 <div className="flex items-center justify-center bg-gray-100 p-4 mt-4">
                     <p className="text-center text-sm text-red-500">{errorMessage}</p>
                 </div>
