@@ -8,7 +8,6 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
         password: ''
     });
     const [errorMessage, setErrorMessage] = useState('');
-    const [errorVisible, setErrorVisible] = useState(false);
     const [username, setUsername] = useState('');
     const [jwt, setJwt] = useState('');
     const [score, setScore] = useState(() => {
@@ -41,11 +40,6 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
             });
             if (response.data.error) {
                 setErrorMessage(response.data.error);
-                setErrorVisible(true);
-                setTimeout(() => {
-                    setErrorMessage('');
-                    setErrorVisible(false);
-                }, 1000);
             } else {
                 const userData = response.data;
                 localStorage.setItem('user', JSON.stringify(userData));
@@ -56,15 +50,11 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
                 setData({ email: '', password: '' });
                 fetchScore(response.data.token);
                 fetchUserRanking(response.data.token);
+                fetchBestScore();
             }
         } catch (error) {
             console.error('Erreur lors de la connexion:', error);
             setErrorMessage('Erreur lors de la connexion');
-            setErrorVisible(true);
-            setTimeout(() => {
-                setErrorMessage('');
-                setErrorVisible(false);
-            }, 1000);
         }
     };
 
@@ -106,13 +96,32 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
         }
     };
 
+    const fetchUserData = async () => {
+        try {
+            const response = await axios.get('http://localhost:8000/user', {
+                headers: {
+                    Authorization: `Bearer ${jwt}`
+                }
+            });
+            setUsername(response.data.name);
+        } catch (error) {
+            console.error('Erreur lors de la récupération des données utilisateur:', error);
+        }
+    };
+
+    useEffect(() => {
+        if (jwt) {
+            fetchUserData();
+        }
+    }, [jwt]);
+
     const shareOnTwitter = () => {
-        const shareUrl = `https://twitter.com/intent/tweet?text=Mon%20score%20total%20est%20de%20${score}%20et%20mon%20classement%20est%20${userRanking}%2F${totalUsers}%20sur%20Quoiz%20!%20Viens%20me%20battre%20!`;
+        const shareUrl = `https://twitter.com/intent/tweet?text=Je%20suis%20${userRanking}%20%2F%20${totalUsers}%20utilisateurs%20sur%20Quoiz%20et%20mon%20score%20est%20de%20${score}%20!%20🎉%20Le%20meilleur%20score%20global%20est%20de%20${bestScore}%20!`;
         window.open(shareUrl, '_blank');
     };
 
     const shareOnFacebook = () => {
-        const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=https://example.com&quote=Mon%20score%20total%20est%20de%20${score}%20et%20mon%20classement%20est%20${userRanking}%2F${totalUsers}%20sur%20Quoiz%20!%20Viens%20me%20battre%20!`;
+        const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=https://example.com&quote=Je%20suis%20${userRanking}%20%2F%20${totalUsers}%20utilisateurs%20sur%20Quoiz%20et%20mon%20score%20est%20de%20${score}%20!%20🎉%20Le%20meilleur%20score%20global%20est%20de%20${bestScore}%20!`;
         window.open(shareUrl, '_blank');
     };
 
@@ -128,7 +137,7 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
                         <p className="text-3xl font-bold text-gray-800 mb-4">Bienvenue, {username}!</p>
                         <p className="text-xl mb-6">Votre score actuel : {score}</p>
                         <p className="text-xl mb-4">Votre classement : {userRanking} / {totalUsers} utilisateurs</p>
-                        <p className="text-xl mb-4">Meilleur score à battre : {bestScore}</p>
+                        <p className="text-xl mb-4">Score à battre : {bestScore}</p>
                         <p className="text-lg text-gray-500 mb-4">Vous êtes connecté avec succès.</p>
                     </div>
 
@@ -173,9 +182,9 @@ function LoginTest({ setIsLoggedIn, isLoggedIn }) {
                 </form>
             )}
 
-            {errorVisible && errorMessage && (
-                <div className="flex items-center justify-center bg-gray-100 p-4 mt-4">
-                    <p className="text-center text-sm text-red-500">{errorMessage}</p>
+            {errorMessage && (
+                <div className="mt-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                    <span className="block sm:inline">{errorMessage}</span>
                 </div>
             )}
         </div>

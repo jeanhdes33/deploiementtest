@@ -14,30 +14,53 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
     return localStorage.getItem('user') ? true : false;
   });
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth > 768);
 
   const handleLogout = () => {
-    localStorage.clear(); // Vide complètement le localStorage
-    setIsLoggedIn(false); // Mettre à jour l'état isLoggedIn
+    localStorage.clear();
+    setIsLoggedIn(false);
   };
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  useEffect(() => {
+    const updateScreenSize = () => {
+      setIsLargeScreen(window.innerWidth > 768);
+    };
+    window.addEventListener('resize', updateScreenSize);
+    return () => window.removeEventListener('resize', updateScreenSize);
+  }, []);
 
   return (
     <Router>
-      <div className='font-varela bg-white text-black h-screen flex flex-col'>
-        <header className="bg-primary py-4 px-6 flex justify-between items-center">
-          <div className="flex items-center">
+      <div className="font-varela bg-white text-black min-h-screen flex flex-col">
+        <header className="bg-primary py-4 px-6 flex flex-col sm:flex-row justify-between items-center">
+          <div className="flex items-center mb-4 sm:mb-0">
             <img src={logo} alt="Logo" className="h-8 mr-4" />
           </div>
-          <div className="flex justify-center flex-grow">
-            <ul className="nav-bar flex gap-4 list-none">
+          <div className="flex justify-center flex-grow sm:hidden">
+            <button onClick={toggleMenu} className="text-white focus:outline-none">
+              {isMenuOpen ? (
+                <span>&#9650;</span> // Utilisation d'un caractère Unicode pour la flèche vers le haut
+              ) : (
+                <span>&#9660;</span> // Utilisation d'un caractère Unicode pour la flèche vers le bas
+              )}
+            </button>
+          </div>
+          <div className={`sm:flex sm:justify-center sm:flex-grow ${isMenuOpen ? 'block' : 'hidden'}`}>
+            <ul className={`nav-bar flex flex-col sm:flex-row gap-4 list-none ${isLargeScreen ? 'text-xl' : 'text-lg'}`}>
               <li className="text-center">
-                <Link to="/" className="text-accent font-bold text-xl hover:text-tertiary no-underline">Home</Link>
+                <Link to="/" className="text-accent font-bold hover:text-tertiary no-underline" onClick={toggleMenu}>Home</Link>
               </li>
               <li className="text-center">
-                <Link to="/quiz" className="text-accent font-bold text-xl hover:text-tertiary no-underline">Quiz</Link>
+                <Link to="/quiz" className="text-accent font-bold hover:text-tertiary no-underline" onClick={toggleMenu}>Quiz</Link>
               </li>
               {isLoggedIn && (
                 <li className="text-center">
-                  <Link to="/quoizer" className="text-accent font-bold text-xl hover:text-tertiary no-underline">Quoizer</Link>
+                  <Link to="/quoizer" className="text-accent font-bold hover:text-tertiary no-underline" onClick={toggleMenu}>Quoizer</Link>
                 </li>
               )}
             </ul>
@@ -46,27 +69,27 @@ function App() {
             <ul className="nav-bar flex gap-4 list-none">
               {isLoggedIn ? (
                 <>
-                  <li className="mr-4">
-                    <Link to="/login" className="text-primary font-bold text-xl rounded-full bg-white px-6 py-3 hover:bg-tertiary transition duration-200 inline-block">
+                  <li>
+                    <Link to="/login" className={`text-primary font-bold rounded-full bg-white px-6 py-3 hover:bg-tertiary transition duration-200 inline-block ${isLargeScreen ? 'text-xl' : 'text-lg'}`} onClick={toggleMenu}>
                       Mon compte
                     </Link>
                   </li>
-                  <li>
-                    <button onClick={handleLogout} className="text-white font-bold text-xl rounded-full bg-red-600 px-6 py-3 hover:bg-red-700 transition duration-200 inline-block">
+                  <li className="mr-4">
+                    <button onClick={handleLogout} className={`text-white font-bold rounded-full bg-red-600 px-6 py-3 hover:bg-red-700 transition duration-200 inline-block ${isLargeScreen ? 'text-xl' : 'text-lg'}`}>
                       Déconnexion
                     </button>
                   </li>
                 </>
               ) : (
                 <li>
-                  <Link to="/login" className="text-primary font-bold text-xl rounded-full bg-white px-6 py-3 hover:bg-tertiary transition duration-200 inline-block">
+                  <Link to="/login" className={`text-primary font-bold rounded-full bg-white px-6 py-3 hover:bg-tertiary transition duration-200 inline-block ${isLargeScreen ? 'text-xl' : 'text-lg'}`} onClick={toggleMenu}>
                     Login
                   </Link>
                 </li>
               )}
               {!isLoggedIn && (
                 <li>
-                  <Link to="/register" className="text-accent font-bold text-xl rounded-full bg-secondary px-6 py-3 hover:bg-tertiary transition duration-200 inline-block">
+                  <Link to="/register" className={`text-accent font-bold rounded-full bg-secondary px-6 py-3 hover:bg-tertiary transition duration-200 inline-block ${isLargeScreen ? 'text-xl' : 'text-lg'}`} onClick={toggleMenu}>
                     Register
                   </Link>
                 </li>
@@ -84,11 +107,12 @@ function App() {
             )}
             <Route path="/categories/sports" element={<Sports />} />
             <Route path="/categories/football" element={<Football />} />
-  
             {!isLoggedIn && (
               <Route path="/quiz" element={<Navigate to="/login" />} />
             )}
-            <Route path="/quoizer" element={<QuestionForm />} />
+            {isLoggedIn && (
+              <Route path="/quoizer" element={<QuestionForm />} />
+            )}
           </Routes>
         </main>
       </div>

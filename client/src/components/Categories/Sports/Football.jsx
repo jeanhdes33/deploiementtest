@@ -93,65 +93,59 @@ function Football() {
   const shareOnTwitter = () => {
     const shareUrl = `https://twitter.com/intent/tweet?text=Mon%20nombre%20de%20bonnes%20réponses%20à%20Quoiz%20est%20de%20${correctAnswers}%20!%20Viens%20jouer%20!`;
     window.open(shareUrl, '_blank');
-};
+  };
 
-const shareOnFacebook = () => {
+  const shareOnFacebook = () => {
     const shareUrl = `https://www.facebook.com/sharer/sharer.php?u=https://example.com&quote=Mon%20nombre%20de%20bonnes%20réponses%20à%20Quoiz%20est%20de%20${correctAnswers}%20!%20Viens%20jouer%20!`;
     window.open(shareUrl, '_blank');
-};
-
-  if (quizComplete) {
-    return (
-      <div className="quiz">
-        <div className="quiz-content">
-          <div className="question-section tertiary-bg">
-            <div className="question-text">
-              <h2 className="question">Quiz complet</h2>
-            </div>
-          </div>
-          <div className="answer-section" style={{ opacity: quizComplete ? 1 : 0, transition: 'opacity 1s ease' }}>
-            <button style={{ textAlign: 'center', cursor: 'default' }}><strong>Votre score global est : {score}</strong></button>
-            <button style={{ textAlign: 'center', cursor: 'default' }}><strong>Nombre de bonnes réponses : {correctAnswers} / 5</strong></button>
-            <button style={{ textAlign: 'center', cursor: 'default' }}><strong>Précision : {((correctAnswers / 5) * 100).toFixed(2)}%</strong></button>
-            <button onClick={shareOnTwitter} className="question" style={{backgroundColor: 'transparent', border: '2px solid blue', color: 'blue'}}>Partager sur Twitter</button>
-<button onClick={shareOnFacebook} className="button share" style={{backgroundColor: 'transparent', border: '2px solid blue', color: 'blue'}}>Partager sur Facebook</button>
-
-          </div>
-          <div className="share-buttons flex justify-center mt-4">
-  
-            
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!question) {
-    return <div className="loading">Loading...</div>;
-  }
+  };
 
   return (
-    <div className="quiz">
-      <div className="quiz-content">
-        <div className="question-section tertiary-bg">
-          <div className="question-count white">Question</div>
-          <div className="question-text">
-            <h2 className="question">{question.question}</h2>
-          </div>
+    <div className="quiz-container flex justify-center">
+      <div className="quiz">
+        <div className="quiz-content" style={{ maxWidth: '100%', width: '100%' }}>
+          {quizComplete ? (
+            <div>
+              <div className="question-section tertiary-bg">
+                <div className="question-text">
+                  <h2 className="question">Quiz complet</h2>
+                </div>
+              </div>
+              <div className="answer-section" style={{ opacity: quizComplete ? 1 : 0, transition: 'opacity 1s ease' }}>
+                <button style={{ textAlign: 'center', cursor: 'default' }}><strong>Votre score global est : {score}</strong></button>
+                <button style={{ textAlign: 'center', cursor: 'default' }}><strong>Nombre de bonnes réponses : {correctAnswers} / 5</strong></button>
+                <button style={{ textAlign: 'center', cursor: 'default' }}><strong>Précision : {((correctAnswers / 5) * 100).toFixed(2)}%</strong></button>
+                <button onClick={shareOnTwitter} className="question" style={{backgroundColor: 'transparent', border: '2px solid blue', color: 'blue'}}>Partager sur Twitter</button>
+                <button onClick={shareOnFacebook} className="button share" style={{backgroundColor: 'transparent', border: '2px solid blue', color: 'blue'}}>Partager sur Facebook</button>
+              </div>
+              <div className="share-buttons flex justify-center mt-4"></div>
+            </div>
+          ) : !question ? (
+            <div className="loading">Loading...</div>
+          ) : (
+            <div>
+              <div className="question-section tertiary-bg">
+                <div className="question-count white">Question</div>
+                <div className="question-text">
+                  <h2 className="question">{question.question}</h2>
+                </div>
+              </div>
+              <div className="answer-section">
+                {question.options.map((option, index) => (
+                  <button
+                    key={index}
+                    onClick={() => handleAnswerButtonClick(index)}
+                    className={answered && index === question.correctOptionIndex ? 'correct' : answered && index !== question.correctOptionIndex ? 'incorrect' : ''}
+                    disabled={answered || disableButtons}
+                  >
+                    {option}
+                  </button>
+                ))}
+              </div>
+              <div className="time-left">Temps restant : {timeLeft} secondes</div>
+            </div>
+          )}
         </div>
-        <div className="answer-section">
-          {question.options.map((option, index) => (
-            <button
-              key={index}
-              onClick={() => handleAnswerButtonClick(index)}
-              className={answered && index === question.correctOptionIndex ? 'correct' : answered && index !== question.correctOptionIndex ? 'incorrect' : ''}
-              disabled={answered || disableButtons}
-            >
-              {option}
-            </button>
-          ))}
-        </div>
-        <div className="time-left">Temps restant : {timeLeft} secondes</div>
       </div>
     </div>
   );

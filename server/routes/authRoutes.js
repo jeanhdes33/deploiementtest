@@ -1,29 +1,29 @@
 const express = require('express');
 const router = express.Router();
-const authController = require('../controllers/authController');
+const cors = require('cors');
+const { test, registerUser, loginUser, getProfile, getUser, updateUserScore, getUserRanking, getBestScore } = require('../controllers/authController');
+const { createQuestion, getQuestionsByCategoryAndSubCategory, getRandomFootballQuestion, submitAnswer, getCorrectAnswer } = require('../controllers/questionsController');
 
-// Route de test
-router.get('/test', authController.test);
+router.use(
+    cors({
+        credentials: true,
+        origin: 'http://localhost:3000'
+    })
+);
 
-// Route pour l'enregistrement d'un utilisateur
-router.post('/register', authController.registerUser);
+router.get('/', test);
+router.post('/register', registerUser);
+router.post('/login', loginUser);
+router.get('/profile', getProfile);
+router.get('/user', getUser);
+router.post('/update-score', updateUserScore);
+router.get('/user-ranking', getUserRanking); // Route pour récupérer le classement de l'utilisateur
+router.get('/best-score', getBestScore); // Route pour récupérer le meilleur score de tous les utilisateurs
 
-// Route pour la connexion d'un utilisateur
-router.post('/login', authController.loginUser);
-
-// Route pour récupérer le profil de l'utilisateur
-router.get('/profile', authController.getProfile);
-
-// Route pour récupérer les informations d'un utilisateur
-router.get('/user', authController.getUser);
-
-// Route pour mettre à jour le score de l'utilisateur
-router.put('/user/update-score', authController.updateUserScore);
-
-// Route pour récupérer le classement de l'utilisateur
-router.get('/user-ranking', authController.getUserRanking);
-
-// Route pour récupérer le meilleur score de tous les utilisateurs
-router.get('/best-score', authController.getBestScore);
+router.post('/questions', createQuestion);
+router.get('/questions', getQuestionsByCategoryAndSubCategory);
+router.get('/questions/football/random', getRandomFootballQuestion);
+router.post('/questions/:questionId/answers', submitAnswer);
+router.get('/questions/:questionId/correct-answer', getCorrectAnswer);
 
 module.exports = router;

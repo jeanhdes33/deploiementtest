@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
@@ -13,6 +13,15 @@ const categories = [
 
 const Quiz = () => {
   const [hovered, setHovered] = useState(null);
+  const [isLargeScreen, setIsLargeScreen] = useState(window.innerWidth > 768);
+
+  useEffect(() => {
+    const updateScreenSize = () => {
+      setIsLargeScreen(window.innerWidth > 768);
+    };
+    window.addEventListener('resize', updateScreenSize);
+    return () => window.removeEventListener('resize', updateScreenSize);
+  }, []);
 
   const fadeVariants = {
     hidden: { opacity: 0 },
@@ -33,8 +42,8 @@ const Quiz = () => {
 
   return (
     <motion.div
-      className="grid-container"
-      style={{ backgroundColor: 'white', marginTop: '20px', padding: '20px' }}
+      className="quiz-container"
+      style={{ backgroundColor: 'white', marginTop: '20px', padding: '20px', display: isLargeScreen ? 'grid' : 'block', gridTemplateColumns: 'repeat(3, 300px)', gridGap: isLargeScreen ? '20px' : '0' }}
       variants={fadeVariants}
       initial="hidden"
       animate="visible"
@@ -42,7 +51,7 @@ const Quiz = () => {
       {categories.map((category, index) => (
         <motion.div
           key={index}
-          className="grid-item bg-accent"
+          className={`category-item bg-accent ${isLargeScreen ? 'grid-item' : ''}`}
           onMouseEnter={() => setHovered(index)}
           onMouseLeave={() => setHovered(null)}
           whileHover={category.disabled ? null : "hover"}
@@ -52,7 +61,8 @@ const Quiz = () => {
             backgroundColor: category.disabled ? '#D3D3D3' : (hovered === index ? '#67C6E3' : '#DFF5FF'), 
             border: 'none', 
             textAlign: 'center',
-            pointerEvents: category.disabled ? 'none' : 'auto' // Désactive les événements de pointage si la catégorie est désactivée
+            pointerEvents: category.disabled ? 'none' : 'auto',
+            marginBottom: isLargeScreen ? '0' : '20px' // Ajout de la marge basse uniquement si l'écran est petit
           }}
         >
           <Link to={`/categories/${category.name.toLowerCase()}`} className="no-underline text-black">
