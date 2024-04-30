@@ -5,10 +5,10 @@ import { motion } from 'framer-motion';
 const categories = [
   { name: 'Sports', icon: '🏀', disabled: false },
   { name: 'Cinema', icon: '🎬', disabled: false },
-  { name: 'Histoire', icon: '📜', disabled: true },
-  { name: 'Sciences', icon: '🔬', disabled: true },
-  { name: 'Arts', icon: '🎨', disabled: true },
-  { name: 'Culture Générale', icon: '🌍', disabled: true },
+  { name: 'Histoire', icon: '📜', disabled: false },
+  { name: 'Sciences', icon: '🔬', disabled: false },
+  { name: 'Arts', icon: '🎨', disabled: false },
+  { name: 'Culture Générale', icon: '🌍', disabled: false },
 ];
 
 const Quiz = () => {

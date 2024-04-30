@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom'; // Ajoute cette ligne pour importer Link
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
 import LoginTest from './components/loginTest';
 import Register from './components/Register';
 import Home from './components/Home';
@@ -7,9 +7,13 @@ import Quiz from './components/Quiz';
 import Sports from './components/Categories/Sports';
 import Football from './components/Categories/Sports/Football';
 import QuestionForm from './components/QuestionForm';
-import Cinema from './components/Categories/Cinema'; // N'oublie pas d'importer le composant Cinema
+import Cinema from './components/Categories/Cinema';
+import Histoire from './components/Categories/Histoire'; // Ajoutez cette ligne pour importer le composant Histoire
+import Sciences from './components/Categories/Sciences'; // Ajoutez cette ligne pour importer le composant Sciences
+import Arts from './components/Categories/Arts';
 import './App.css';
 import logo from './logo.png';
+import CultureGenerale from './components/Categories/CultureGenerale';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
@@ -45,9 +49,9 @@ function App() {
           <div className="flex justify-center flex-grow sm:hidden">
             <button onClick={toggleMenu} className="text-white focus:outline-none">
               {isMenuOpen ? (
-                <span>&#9650;</span> // Utilisation d'un caractère Unicode pour la flèche vers le haut
+                <span>&#9650;</span>
               ) : (
-                <span>&#9660;</span> // Utilisation d'un caractère Unicode pour la flèche vers le bas
+                <span>&#9660;</span>
               )}
             </button>
           </div>
@@ -109,6 +113,11 @@ function App() {
             <Route path="/categories/sports" element={<Sports />} />
             <Route path="/categories/football" element={<Football />} />
             <Route path="/categories/cinema" element={<Cinema />} />
+            <Route path="/categories/histoire" element={<Histoire />} /> {/* Ajoutez cette ligne pour la route d'histoire */}
+            <Route path="/categories/sciences" element={<Sciences />} /> {/* Ajoutez cette ligne pour la route de sciences */}
+            <Route path="/categories/arts" element={<Arts />} /> {/* Ajoutez cette ligne pour la route d'arts */}
+            <Route path="/categories/culture générale" element={<CultureGenerale />} /> {/* Ajoutez cette ligne pour la route d'arts */}
+
             {!isLoggedIn && (
               <Route path="/quiz" element={<Navigate to="/login" />} />
             )}

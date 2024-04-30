@@ -56,6 +56,54 @@ const getRandomCinemaQuestion = async (req, res) => {
     }
 };
 
+const getRandomHistoireQuestion = async (req, res) => {
+    try {
+        const count = await Question.countDocuments({ category: 'Histoire' });
+        const randomIndex = Math.floor(Math.random() * count);
+        const randomHistoireQuestion = await Question.findOne({ category: 'Histoire' }).skip(randomIndex).limit(1);
+        res.json(randomHistoireQuestion);
+    } catch (error) {
+        console.error('Erreur lors de la récupération de la question d\'histoire aléatoire :', error);
+        res.status(500).json({ error: 'Erreur interne du serveur' });
+    }
+};
+
+const getRandomSciencesQuestion = async (req, res) => {
+    try {
+        const count = await Question.countDocuments({ category: 'Sciences' });
+        const randomIndex = Math.floor(Math.random() * count);
+        const randomSciencesQuestion = await Question.findOne({ category: 'Sciences' }).skip(randomIndex).limit(1);
+        res.json(randomSciencesQuestion);
+    } catch (error) {
+        console.error('Erreur lors de la récupération de la question de sciences aléatoire :', error);
+        res.status(500).json({ error: 'Erreur interne du serveur' });
+    }
+};
+
+const getRandomArtsQuestion = async (req, res) => {
+    try {
+        const count = await Question.countDocuments({ category: 'Arts' });
+        const randomIndex = Math.floor(Math.random() * count);
+        const randomArtsQuestion = await Question.findOne({ category: 'Arts' }).skip(randomIndex).limit(1);
+        res.json(randomArtsQuestion);
+    } catch (error) {
+        console.error('Erreur lors de la récupération de la question de sciences aléatoire :', error);
+        res.status(500).json({ error: 'Erreur interne du serveur' });
+    }
+};
+
+const getRandomCultureGeneraleQuestion = async (req, res) => {
+    try {
+        const count = await Question.countDocuments({ category: 'Culture Générale' });
+        const randomIndex = Math.floor(Math.random() * count);
+        const randomCultureGeneraleQuestion = await Question.findOne({ category: 'Culture Générale' }).skip(randomIndex).limit(1);
+        res.json(randomCultureGeneraleQuestion);
+    } catch (error) {
+        console.error('Erreur lors de la récupération de la question de sciences aléatoire :', error);
+        res.status(500).json({ error: 'Erreur interne du serveur' });
+    }
+};
+
 const submitAnswer = async (req, res) => {
     try {
         const { questionId } = req.params;
@@ -100,6 +148,10 @@ module.exports = {
     getQuestionsByCategoryAndSubCategory,
     getRandomFootballQuestion,
     getRandomCinemaQuestion,
+    getRandomHistoireQuestion,
+    getRandomSciencesQuestion,
+    getRandomArtsQuestion,
+    getRandomCultureGeneraleQuestion,
     submitAnswer,
     getCorrectAnswer
 };
