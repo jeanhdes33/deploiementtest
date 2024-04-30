@@ -44,6 +44,18 @@ const getRandomFootballQuestion = async (req, res) => {
     }
 };
 
+const getRandomCinemaQuestion = async (req, res) => {
+    try {
+        const count = await Question.countDocuments({ category: 'Cinéma' });
+        const randomIndex = Math.floor(Math.random() * count);
+        const randomCinemaQuestion = await Question.findOne({ category: 'Cinéma' }).skip(randomIndex).limit(1);
+        res.json(randomCinemaQuestion);
+    } catch (error) {
+        console.error('Erreur lors de la récupération de la question de cinéma aléatoire :', error);
+        res.status(500).json({ error: 'Erreur interne du serveur' });
+    }
+};
+
 const submitAnswer = async (req, res) => {
     try {
         const { questionId } = req.params;
@@ -87,6 +99,7 @@ module.exports = {
     createQuestion,
     getQuestionsByCategoryAndSubCategory,
     getRandomFootballQuestion,
+    getRandomCinemaQuestion,
     submitAnswer,
     getCorrectAnswer
 };

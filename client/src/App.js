@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate } from 'react-router-dom'; // Ajoute cette ligne pour importer Link
 import LoginTest from './components/loginTest';
 import Register from './components/Register';
 import Home from './components/Home';
@@ -7,6 +7,7 @@ import Quiz from './components/Quiz';
 import Sports from './components/Categories/Sports';
 import Football from './components/Categories/Sports/Football';
 import QuestionForm from './components/QuestionForm';
+import Cinema from './components/Categories/Cinema'; // N'oublie pas d'importer le composant Cinema
 import './App.css';
 import logo from './logo.png';
 
@@ -107,6 +108,7 @@ function App() {
             )}
             <Route path="/categories/sports" element={<Sports />} />
             <Route path="/categories/football" element={<Football />} />
+            <Route path="/categories/cinema" element={<Cinema />} />
             {!isLoggedIn && (
               <Route path="/quiz" element={<Navigate to="/login" />} />
             )}

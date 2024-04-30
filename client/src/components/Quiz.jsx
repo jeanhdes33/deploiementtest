@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 const categories = [
   { name: 'Sports', icon: '🏀', disabled: false },
-  { name: 'Cinema', icon: '🎬', disabled: true },
+  { name: 'Cinema', icon: '🎬', disabled: false },
   { name: 'Histoire', icon: '📜', disabled: true },
   { name: 'Sciences', icon: '🔬', disabled: true },
   { name: 'Arts', icon: '🎨', disabled: true },

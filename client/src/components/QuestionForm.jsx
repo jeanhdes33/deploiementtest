@@ -14,6 +14,27 @@ const QuestionForm = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
+  // Fonction pour vérifier si des sous-catégories existent pour une catégorie donnée
+  const subCategoriesExist = (category) => {
+    // Détermine si des sous-catégories existent pour la catégorie spécifiée
+    switch (category) {
+      case "Sports":
+        // Si la catégorie est "Sports", on suppose qu'il existe des sous-catégories
+        return true;
+      case "Cinéma":
+      case "Histoire":
+      case "Sciences":
+      case "Culture Générale":
+      case "Arts":
+        // Pour les catégories "Cinéma", "Histoire", "Sciences", "Culture Générale" et "Arts", on suppose qu'il n'y a pas de sous-catégories
+        return false;
+      // Ajoutez des cas pour d'autres catégories si nécessaire
+      default:
+        // Par défaut, on suppose qu'il n'y a pas de sous-catégories pour d'autres catégories non spécifiées
+        return false;
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -26,35 +47,43 @@ const QuestionForm = () => {
       return;
     }
 
-    try {
-      const response = await axios.post('http://localhost:8000/questions', {
-        question: formData.question,
-        options: formData.options,
-        correctOptionIndex: correctOptionIndex,
-        category: formData.category,
-        subCategory: formData.subCategory,
-      });
-      if (response.data.error) {
-        setErrorMessage(response.data.error);
+    // Vérifiez si une sous-catégorie est sélectionnée si elle existe pour la catégorie choisie
+    if (formData.subCategory || !subCategoriesExist(formData.category)) {
+      try {
+        const response = await axios.post('http://localhost:8000/questions', {
+          question: formData.question,
+          options: formData.options,
+          correctOptionIndex: correctOptionIndex,
+          category: formData.category,
+          subCategory: formData.subCategory,
+        });
+        if (response.data.error) {
+          setErrorMessage(response.data.error);
+          setTimeout(() => {
+            setErrorMessage('');
+          }, 2000);
+        } else {
+          setSuccessMessage('Question ajoutée avec succès !');
+          setTimeout(() => {
+            setSuccessMessage('');
+            setFormData({
+              question: '',
+              options: ['', '', '', ''],
+              category: '',
+              subCategory: '',
+            });
+            setCorrectOptionIndex(-1);
+          }, 2000);
+        }
+      } catch (error) {
+        console.error('Erreur lors de l\'ajout de la question :', error);
+        setErrorMessage('Erreur lors de l\'ajout de la question');
         setTimeout(() => {
           setErrorMessage('');
         }, 2000);
-      } else {
-        setSuccessMessage('Question ajoutée avec succès !');
-        setTimeout(() => {
-          setSuccessMessage('');
-          setFormData({
-            question: '',
-            options: ['', '', '', ''],
-            category: '',
-            subCategory: '',
-          });
-          setCorrectOptionIndex(-1);
-        }, 2000);
       }
-    } catch (error) {
-      console.error('Erreur lors de l\'ajout de la question :', error);
-      setErrorMessage('Erreur lors de l\'ajout de la question');
+    } else {
+      setErrorMessage('Veuillez sélectionner une sous-catégorie valide');
       setTimeout(() => {
         setErrorMessage('');
       }, 2000);
@@ -124,7 +153,7 @@ const QuestionForm = () => {
                   <select
                     id="category"
                     value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value, subCategory: '' })}
                     className="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring"
                     required
                   >
@@ -138,26 +167,28 @@ const QuestionForm = () => {
                   </select>
                 </div>
 
-                <div className="w-full md:w-1/2">
-                  <label htmlFor="subcategory" className="mb-2 inline-block text-sm text-gray-800 sm:text-base">Sous-catégorie</label>
-                  <select
-                    id="subcategory"
-                    value={formData.subCategory}
-                    onChange={(e) => setFormData({ ...formData, subCategory: e.target.value })}
-                    className="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring"
-                    required
-                  >
-                    <option value="">Sélectionner une sous-catégorie...</option>
-                    {formData.category === "Sports" && (
-                      <>
-                        <option value="Football">Football</option>
-                        <option value="Basketball">Basketball</option>
-                        <option value="Tennis">Tennis</option>
-                      </>
-                    )}
-                    {/* Ajouter d'autres sous-catégories si nécessaire */}
-                  </select>
-                </div>
+                {formData.category && (
+                  <div className="w-full md:w-1/2">
+                    <label htmlFor="subcategory" className="mb-2 inline-block text-sm text-gray-800 sm:text-base">Sous-catégorie</label>
+                    <select
+                      id="subcategory"
+                      value={formData.subCategory}
+                      onChange={(e) => setFormData({ ...formData, subCategory: e.target.value })}
+                      className="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring"
+                      disabled={!subCategoriesExist(formData.category)}
+                    >
+                      <option value="">Sélectionner une sous-catégorie...</option>
+                      {formData.category === "Sports" && (
+                        <>
+                          <option value="Football">Football</option>
+                          <option value="Basketball">Basketball</option>
+                          <option value="Tennis">Tennis</option>
+                        </>
+                      )}
+                      {/* Ajouter d'autres sous-catégories si nécessaire */}
+                    </select>
+                  </div>
+                )}
               </div>
 
               <button type="submit" className="block rounded-lg bg-secondary px-8 py-3 text-center text-sm font-semibold text-white outline-none ring-gray-300 transition duration-100 hover:bg-primary focus-visible:ring active:bg-gray-600 md:text-base">Soumettre</button>
