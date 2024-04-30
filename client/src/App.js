@@ -14,6 +14,8 @@ import Arts from './components/Categories/Arts';
 import './App.css';
 import logo from './logo.png';
 import CultureGenerale from './components/Categories/CultureGenerale';
+import Tennis from './components/Categories/Sports/Tennis';
+import Basketball from './components/Categories/Sports/Basketball';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(() => {
@@ -112,6 +114,8 @@ function App() {
             )}
             <Route path="/categories/sports" element={<Sports />} />
             <Route path="/categories/football" element={<Football />} />
+            <Route path="/categories/tennis" element={<Tennis />} />
+            <Route path="/categories/basketball" element={<Basketball />} />
             <Route path="/categories/cinema" element={<Cinema />} />
             <Route path="/categories/histoire" element={<Histoire />} /> {/* Ajoutez cette ligne pour la route d'histoire */}
             <Route path="/categories/sciences" element={<Sciences />} /> {/* Ajoutez cette ligne pour la route de sciences */}

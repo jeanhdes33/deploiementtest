@@ -5,8 +5,8 @@ import { motion } from 'framer-motion';
 const Sport = () => {
   const sportCategories = [
     { name: 'Football', icon: '⚽', description: 'Description du football.', slug: 'football' },
-    { name: 'Basketball', icon: '🏀', description: 'Description du basketball.', slug: 'basketball', disabled: true },
-    { name: 'Tennis', icon: '🎾', description: 'Description du tennis.', slug: 'tennis', disabled: true },
+    { name: 'Basketball', icon: '🏀', description: 'Description du basketball.', slug: 'basketball', disabled: false },
+    { name: 'Tennis', icon: '🎾', description: 'Description du tennis.', slug: 'tennis', disabled: false },
   ];
 
   const [fadeIn, setFadeIn] = useState(false);

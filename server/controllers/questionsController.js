@@ -44,6 +44,30 @@ const getRandomFootballQuestion = async (req, res) => {
     }
 };
 
+const getRandomTennisQuestion = async (req, res) => {
+    try {
+        const count = await Question.countDocuments({ category: 'Sports', subCategory: 'Tennis' });
+        const randomIndex = Math.floor(Math.random() * count);
+        const randomTennisQuestion = await Question.findOne({ category: 'Sports', subCategory: 'Tennis' }).skip(randomIndex).limit(1);
+        res.json(randomTennisQuestion);
+    } catch (error) {
+        console.error('Erreur lors de la récupération de la question de Tennis aléatoire :', error);
+        res.status(500).json({ error: 'Erreur interne du serveur' });
+    }
+};
+
+const getRandomBasketballQuestion = async (req, res) => {
+    try {
+        const count = await Question.countDocuments({ category: 'Sports', subCategory: 'Basketball' });
+        const randomIndex = Math.floor(Math.random() * count);
+        const randomBasketballQuestion = await Question.findOne({ category: 'Sports', subCategory: 'Basketball' }).skip(randomIndex).limit(1);
+        res.json(randomBasketballQuestion);
+    } catch (error) {
+        console.error('Erreur lors de la récupération de la question de Basketball aléatoire :', error);
+        res.status(500).json({ error: 'Erreur interne du serveur' });
+    }
+};
+
 const getRandomCinemaQuestion = async (req, res) => {
     try {
         const count = await Question.countDocuments({ category: 'Cinéma' });
@@ -147,6 +171,8 @@ module.exports = {
     createQuestion,
     getQuestionsByCategoryAndSubCategory,
     getRandomFootballQuestion,
+    getRandomTennisQuestion,
+    getRandomBasketballQuestion,
     getRandomCinemaQuestion,
     getRandomHistoireQuestion,
     getRandomSciencesQuestion,

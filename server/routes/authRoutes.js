@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const cors = require('cors');
 const { test, registerUser, loginUser, getProfile, getUser, updateUserScore, getUserRanking, getBestScore } = require('../controllers/authController');
-const { createQuestion, getQuestionsByCategoryAndSubCategory, getRandomFootballQuestion, getRandomCinemaQuestion, getRandomHistoireQuestion, getRandomSciencesQuestion, getRandomArtsQuestion, getRandomCultureGeneraleQuestion, submitAnswer, getCorrectAnswer } = require('../controllers/questionsController');
+const { createQuestion, getQuestionsByCategoryAndSubCategory, getRandomFootballQuestion, getRandomTennisQuestion, getRandomBasketballQuestion, getRandomCinemaQuestion, getRandomHistoireQuestion, getRandomSciencesQuestion, getRandomArtsQuestion, getRandomCultureGeneraleQuestion, submitAnswer, getCorrectAnswer } = require('../controllers/questionsController');
 
 router.use(
     cors({
@@ -23,6 +23,8 @@ router.get('/best-score', getBestScore); // Route pour récupérer le meilleur s
 router.post('/questions', createQuestion);
 router.get('/questions', getQuestionsByCategoryAndSubCategory);
 router.get('/questions/football/random', getRandomFootballQuestion);
+router.get('/questions/tennis/random', getRandomTennisQuestion);
+router.get('/questions/basketball/random', getRandomBasketballQuestion);
 router.get('/questions/cinema/random', getRandomCinemaQuestion); // Route pour obtenir des questions de cinéma aléatoires
 router.get('/questions/histoire/random', getRandomHistoireQuestion); // Route pour obtenir des questions d'histoire aléatoires
 router.get('/questions/science/random', getRandomSciencesQuestion);
